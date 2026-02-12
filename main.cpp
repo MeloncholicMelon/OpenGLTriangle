@@ -47,15 +47,18 @@ int main()
 	glViewport(0, 0, 800, 800);
 
 
-	float vertices[] = {
+	float vertices1[] = {
 		// first triangle
 		-0.9f, -0.5f, 0.0f,  // left 
 		-0.0f, -0.5f, 0.0f,  // right
 		-0.45f, 0.5f, 0.0f,  // top 
+	};
+
+	float vertices2[] = {
 		// second triangle
-		 0.0f, -0.5f, 0.0f,  // left
-		 0.9f, -0.5f, 0.0f,  // right
-		 0.45f, 0.5f, 0.0f   // top 
+		0.0f, -0.5f, 0.0f,  // left
+		0.9f, -0.5f, 0.0f,  // right
+		0.45f, 0.5f, 0.0f   // top 
 	};
 
 	const char* vertexShaderSource = "#version 330 core\n"
@@ -76,67 +79,57 @@ int main()
 	glShaderSource(vertexShader, 1, &vertexShaderSource, NULL);
 	glCompileShader(vertexShader);
 
-	// same thing for fragment shader
+	int success;
+	char errormsg[512];
+
+	glGetShaderiv(vertexShader, GL_COMPILE_STATUS, &success);
+
+	if (!success) {
+		glGetShaderInfoLog(vertexShader, 512, NULL, errormsg);
+		std::cout << "ERROR FAILED TO COMPILE VERTEXSHADER" << errormsg << std::endl;
+	}
+
 	unsigned int fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
 	glShaderSource(fragmentShader, 1, &fragmentShaderSource, NULL);
 	glCompileShader(fragmentShader);
 
-	int success;
-	char infolog[512];
-	glGetShaderiv(vertexShader, GL_COMPILE_STATUS, &success);
-
-	if (!success){
-		// not dereferencing infolog because an array is already a pointer to index 0
-		glGetShaderInfoLog(vertexShader, 512, NULL, infolog);
-		std::cout << "VERTEX SHADER COMPILATION FAILED" << infolog << std::endl;
-
-
-	}
-
 	glGetShaderiv(fragmentShader, GL_COMPILE_STATUS, &success);
-
 	if (!success) {
-		// not dereferencing infolog because an array is already a pointer to index 0
-		glGetShaderInfoLog(fragmentShader, 512, NULL, infolog);
-		std::cout << "FRAGMENT SHADER COMPILATION FAILED" << infolog << std::endl;
-
+		glGetShaderInfoLog(fragmentShader, 512, NULL, errormsg);
 	}
 
 	unsigned int shaderProgram = glCreateProgram();
 	glAttachShader(shaderProgram, vertexShader);
-	glAttachShader(shaderProgram, fragmentShader);
-
+	glAttachShader(shaderProgram, vertexShader);
 	glLinkProgram(shaderProgram);
 
 	glDeleteShader(vertexShader);
 	glDeleteShader(fragmentShader);
 
+	unsigned int VBO1, VAO1;
 	
-	glGetShaderiv(shaderProgram, GL_COMPILE_STATUS, &success);
-	if (!success) {
-		// not dereferencing infolog because an array is already a pointer to index 0
-		glGetShaderInfoLog(shaderProgram, 512, NULL, infolog);
-		std::cout << "SHADER LINKCOMPILATION FAILED" << infolog << std::endl;
-	}
+	glGenBuffers(1, &VBO1);
 
-	unsigned int VBO, VAO, EBO;
+	glGenVertexArrays(1,&VAO1);
+	glBindVertexArray(VAO1);
 
-	glGenBuffers(1, &VBO);
-
-	//glGenBuffers(1, &EBO);
-	//glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
-	//glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), &indices, GL_STATIC_DRAW);
-
-
-	// VAO must be bound before VBOs
-	glGenVertexArrays(1, &VAO);
-	glBindVertexArray(VAO);
-
-	glBindBuffer(GL_ARRAY_BUFFER, VBO);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
-
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
+	glBindBuffer(GL_ARRAY_BUFFER, VBO1);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(vertices1), vertices1, GL_STATIC_DRAW);
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(GL_FLOAT), (void*)0);
 	glEnableVertexAttribArray(0);
+
+	unsigned int VBO2, VAO2;
+
+	glGenBuffers(1, &VBO2);
+
+	glGenVertexArrays(1, &VAO2);
+	glBindVertexArray(VAO2);
+
+	glBindBuffer(GL_ARRAY_BUFFER, VBO2);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(vertices2), vertices2, GL_STATIC_DRAW);
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(GL_FLOAT), (void*)0);
+	glEnableVertexAttribArray(0);
+
 
 
 	// Main while loop
@@ -149,10 +142,14 @@ int main()
 		glClear(GL_COLOR_BUFFER_BIT);
 
 		glUseProgram(shaderProgram);
-		glBindVertexArray(VAO);
-		//glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
 
-		glDrawArrays(GL_TRIANGLES, 0, 6);
+		glBindVertexArray(VAO1);
+		glDrawArrays(GL_TRIANGLES, 0, 3);
+
+		glBindVertexArray(VAO2);
+		glDrawArrays(GL_TRIANGLES, 0, 3);
+
+
 		glfwSwapBuffers(window);
 
 		// Take care of all GLFW events
