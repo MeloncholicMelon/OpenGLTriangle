@@ -1,6 +1,8 @@
 #include<iostream>
 #include<glad/glad.h>
 #include<GLFW/glfw3.h>
+#include "shaderClass.h"
+
 
 void processInput(GLFWwindow* window)
 {
@@ -129,10 +131,10 @@ int main()
 	glDeleteShader(fragmentShader2);
 
 	unsigned int VBO1, VAO1;
-	
+
 	glGenBuffers(1, &VBO1);
 
-	glGenVertexArrays(1,&VAO1);
+	glGenVertexArrays(1, &VAO1);
 	glBindVertexArray(VAO1);
 
 	glBindBuffer(GL_ARRAY_BUFFER, VBO1);
@@ -187,4 +189,4 @@ int main()
 	// Terminate GLFW before ending the program
 	glfwTerminate();
 	return 0;
-}
+}f
