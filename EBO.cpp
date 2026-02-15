@@ -7,7 +7,8 @@ EBO::EBO(GLfloat* vertices, GLsizeiptr size) {
 
 }
 
-void EBO::Bind() {1, GL_ELEMENT_ARRAY_BUFFER);
+void EBO::Bind() {
+	glBindBuffer(1, GL_ELEMENT_ARRAY_BUFFER);
 }
 
 
