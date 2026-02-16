@@ -42,6 +42,10 @@ public:
 			// close file handler
 			vShaderFile.close();
 			fShaderFile.close();
+
+			// convert stream into string
+			vertexCode = vShaderStream.str();
+			fragmentCode = fShaderStream.str();
 		}
 		catch (std::ifstream::failure e)
 		{
@@ -91,7 +95,7 @@ public:
 			glGetShaderInfoLog(ID, 512, NULL, infolog);
 			std::cout << "ERROR : Program : Link failed\n" << infolog << std::endl;
 		};
-		
+
 		glDeleteShader(fragment);
 		glDeleteShader(vertex);
 	}
@@ -112,5 +116,6 @@ public:
 	void setFloat(const std::string& name, float value) const
 	{
 		glUniform1f(glGetUniformLocation(ID, name.c_str()), value);
-};
+	}
 #endif
+};
