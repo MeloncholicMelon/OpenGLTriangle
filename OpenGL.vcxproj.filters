@@ -16,6 +16,9 @@
     <Filter Include="Resource Files\Shaders">
       <UniqueIdentifier>{e12efc79-40d9-49d1-85fa-fa2bbb3fcb9d}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Resource Files\Texture">
+      <UniqueIdentifier>{7327b450-1098-43f7-9e5e-141991c5138b}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="glad.c">
@@ -61,5 +64,19 @@
     <ClInclude Include="VAO.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="..\OpenGLShaderPractice\container.jpg">
+      <Filter>Resource Files\Texture</Filter>
+    </Image>
+    <Image Include="GithubFeb.png">
+      <Filter>Resource Files\Texture</Filter>
+    </Image>
+    <Image Include="jokebear.png">
+      <Filter>Resource Files\Texture</Filter>
+    </Image>
+    <Image Include="jokebear2.jpg">
+      <Filter>Resource Files\Texture</Filter>
+    </Image>
   </ItemGroup>
 </Project>
