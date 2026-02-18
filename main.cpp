@@ -114,10 +114,20 @@ int main()
 	// load and generate the texture
 	int width, height, nrChannels;
 	stbi_set_flip_vertically_on_load(true);
-	unsigned char* data = stbi_load("jokebear2.jpg", &width, &height, &nrChannels, 0);
+	unsigned char* data = stbi_load("githubFeb.png", &width, &height, &nrChannels, 0);
 	if (data)
 	{
-		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
+
+		GLenum format;
+
+		if (nrChannels == 1)
+			format = GL_RED;
+		else if (nrChannels == 3)
+			format = GL_RGB;
+		else if (nrChannels == 4)
+			format = GL_RGBA;
+
+		glTexImage2D(GL_TEXTURE_2D, 0, format, width, height, 0, format, GL_UNSIGNED_BYTE, data);
 		glGenerateMipmap(GL_TEXTURE_2D);
 	}
 	else
@@ -125,10 +135,18 @@ int main()
 		std::cout << "Failed to load texture" << std::endl;
 	}
 	stbi_image_free(data);
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	
+	float posX = 0.1f, posY = 0.01f;
+	float velX = 0.1f, velY = 0.05f;
 
+	float maxX = .4f;
+	float minX = -.4f;
+	float maxY = .4f;
+	float minY = -.4f;
 
-
-
+	float frameTime = 0.0f;
 	// Main while loop
 	while (!glfwWindowShouldClose(window))
 	{
@@ -140,12 +158,30 @@ int main()
 		glClear(GL_COLOR_BUFFER_BIT);
 
 		float timeValue = glfwGetTime();
-		float rotation1 = (sin(timeValue) / 2.0f) + 0.5f;
-		float rotation2 = (cos(timeValue) / 2.0f) + 0.5f;
+		float time = timeValue - frameTime;
+		frameTime = timeValue;
+
+		posX += velX * time;
+		posY += velY * time;
+
+
+		if (posX + maxX >= 1.0)
+			velX = -velX;
+
+		if (posX + minX <= -1.0)
+			velX = -velX;
+
+		if (posY + maxY >= 1.0)
+			velY = -velY;
+
+		if (posY + minY <= -1.0)
+			velY = -velY;
+
 
 		shaderProgram.use();
-		shaderProgram.setFloat("xOffset", rotation1);
-		shaderProgram.setFloat("yOffset", rotation2);
+		shaderProgram.setFloat("xOffset", posX);
+		shaderProgram.setFloat("yOffset", posY);
+
 
 
 		glBindTexture(GL_TEXTURE_2D, texture);
